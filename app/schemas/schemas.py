@@ -10,11 +10,14 @@ class BuildingBase(BaseModel):
 
 
 class BuildingCreate(BuildingBase):
-    pass
+    postcode: Optional[str] = None
+    cadastral_number: Optional[str] = None
 
 
 class BuildingSchema(BuildingBase):
     id: int
+    postcode: Optional[str] = None
+    cadastral_number: Optional[str] = None
 
     class Config:
         from_attributes = True

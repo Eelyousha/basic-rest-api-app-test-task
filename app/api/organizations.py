@@ -19,7 +19,7 @@ def get_activity_with_descendants(db: Session, activity_id: int) -> List[int]:
     return activity.get_all_descendants()
 
 
-@router.get("", response_model=List[OrganizationSchema])
+@router.get("", response_model=List[OrganizationDetailSchema])
 async def get_organizations(
     building_id: Optional[int] = Query(None, description="Filter by building ID"),
     activity_id: Optional[int] = Query(None, description="Filter by activity (includes children)"),
@@ -42,7 +42,10 @@ async def get_organizations(
     - lat, lon, radius: Geo radius search
     - lat_min, lat_max, lon_min, lon_max: Geo bounding box search
     """
-    query = db.query(Organization).join(Building)
+    query = db.query(Organization).join(Building).options(
+        joinedload(Organization.building),
+        joinedload(Organization.activities)
+    )
 
     if building_id is not None:
         query = query.filter(Organization.building_id == building_id)

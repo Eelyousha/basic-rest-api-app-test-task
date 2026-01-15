@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.ext.mutable import MutableList
 
 from app.core.database import Base
 
@@ -18,6 +19,8 @@ class Building(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     address = Column(String, nullable=False)
+    postcode = Column(String, nullable=True)
+    cadastral_number = Column(String, nullable=True)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
 
@@ -49,7 +52,8 @@ class Organization(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     building_id = Column(Integer, ForeignKey('buildings.id', ondelete='CASCADE'), nullable=False)
-    phones = Column(ARRAY(String), nullable=True)
+    # Use ARRAY for PostgreSQL, JSON for SQLite (testing)
+    phones = Column(ARRAY(String).with_variant(JSON, "sqlite"), nullable=True)
 
     building = relationship("Building", back_populates="organizations")
     activities = relationship("Activity", secondary=organization_activity, back_populates="organizations")

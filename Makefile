@@ -1,4 +1,4 @@
-.PHONY: help install install-dev build up down restart logs clean test seed lint format check-types
+.PHONY: help install install-dev build up down restart logs clean test test-unit test-api seed lint format check-types
 
 help:
 	@echo "Available commands:"
@@ -19,7 +19,9 @@ help:
 	@echo "  make clean        - Remove all containers and volumes"
 	@echo ""
 	@echo "Testing:"
-	@echo "  make test         - Run API tests (requires running services)"
+	@echo "  make test         - Run all tests (unit + API integration)"
+	@echo "  make test-unit    - Run pytest unit tests"
+	@echo "  make test-api     - Run bash API integration tests (requires services)"
 	@echo "  make seed         - Re-seed the database"
 
 install:
@@ -59,8 +61,15 @@ clean:
 	docker-compose down -v
 	@echo "All containers and volumes removed"
 
-test:
-	@echo "Running API tests..."
+test: test-unit test-api
+	@echo "All tests completed!"
+
+test-unit:
+	@echo "Running pytest unit tests..."
+	pytest
+
+test-api:
+	@echo "Running API integration tests..."
 	@bash test_api.sh
 
 seed:

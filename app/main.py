@@ -7,9 +7,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-app.include_router(organizations.router)
-app.include_router(buildings.router)
-app.include_router(activities.router)
+app.include_router(organizations.router, prefix="/api/v1")
+app.include_router(buildings.router, prefix="/api/v1")
+app.include_router(activities.router, prefix="/api/v1")
 
 
 @app.get("/")
